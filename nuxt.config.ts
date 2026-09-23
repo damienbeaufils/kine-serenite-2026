@@ -33,6 +33,12 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  vue: {
+    compilerOptions: {
+      whitespace: 'preserve'
+    }
+  },
+
   ui: {
     colorMode: false
   },

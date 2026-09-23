@@ -47,7 +47,8 @@ usePageSeo({
         </li>
         <li>
           <b>Contact de la personne responsable de la protection des
-            renseignements personnels :</b> <a href="mailto:virginiedang.massotherapeute@gmail.com">virginiedang.massotherapeute@gmail.com </a><!-- trailing space: Vue 3 drops the whitespace-only text node before the next li that Vue 2 kept -->
+            renseignements personnels :</b>
+          <a href="mailto:virginiedang.massotherapeute@gmail.com">virginiedang.massotherapeute@gmail.com</a>
         </li>
         <li>
           <b>Éléments des renseignements personnels collectés :</b> nom,
