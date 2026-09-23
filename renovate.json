@@ -1,4 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>nuxt/renovate-config-nuxt"]
+  "extends": ["github>nuxt/renovate-config-nuxt"],
+  "packageRules": [
+    {
+      "description": "typescript-eslint supports typescript <6.1.0, and TypeScript 7 ships no JavaScript compiler API for vue-tsc",
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<6.1.0"
+    }
+  ]
 }
