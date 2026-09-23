@@ -82,7 +82,7 @@ usePageSeo({
     <div class="v-col col-12 order-1 mx-auto my-auto sm:col-6 sm:order-0">
       <img
         src="/img/services/massage_de_repit.jpg"
-        alt=""
+        :alt="IMAGE_ALT['massage_de_repit.jpg']"
         width="800"
         height="537"
         loading="lazy"

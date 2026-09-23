@@ -49,7 +49,7 @@ usePageSeo({
     <div class="v-col col-12 sm:col-8">
       <img
         src="/img/services/massage_tissus_profonds.jpg"
-        alt=""
+        :alt="IMAGE_ALT['massage_tissus_profonds.jpg']"
         width="800"
         height="533"
         loading="lazy"

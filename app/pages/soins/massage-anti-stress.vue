@@ -47,7 +47,7 @@ usePageSeo({
     <div class="v-col col-12 sm:col-8">
       <img
         src="/img/services/massage_anti-stress.jpg"
-        alt=""
+        :alt="IMAGE_ALT['massage_anti-stress.jpg']"
         width="800"
         height="533"
         loading="lazy"

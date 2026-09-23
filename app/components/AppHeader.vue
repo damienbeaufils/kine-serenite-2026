@@ -57,7 +57,7 @@ function onCloseAutoFocus(event: Event) {
       >
         <img
           src="/img/virginie_dang_massotherapeute_logo_2026.png"
-          alt=""
+          :alt="IMAGE_ALT.logo"
           width="308"
           height="176"
           class="block h-[120px] w-[308px] max-w-none object-contain"

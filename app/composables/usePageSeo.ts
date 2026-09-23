@@ -5,6 +5,7 @@ interface PageSeoInput {
 }
 
 export function usePageSeo({ title, description, path }: PageSeoInput): void {
-  useSeoMeta({ title, description })
-  useHead({ link: [{ rel: 'canonical', href: `${SITE_URL}${path}` }] })
+  const url = `${SITE_URL}${path}`
+  useSeoMeta({ title, description, ogTitle: title, ogDescription: description, ogUrl: url })
+  useHead({ link: [{ rel: 'canonical', href: url }] })
 }

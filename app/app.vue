@@ -9,8 +9,15 @@ useHead({
 useSeoMeta({
   ogType: 'website',
   ogSiteName: SITE_TITLE,
-  ogTitle: SITE_TITLE,
-  ogDescription: SITE_DESCRIPTION
+  ogLocale: 'fr_CA',
+  ogImage: {
+    url: `${SITE_URL}/img/virginie_dang_massage_2026.png`,
+    width: 1531,
+    height: 532,
+    type: 'image/png',
+    alt: HERO_ALT
+  },
+  twitterCard: 'summary_large_image'
 })
 </script>
 

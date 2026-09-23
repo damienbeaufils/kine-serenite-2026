@@ -27,7 +27,7 @@
           image="/img/services/massage_de_repit.jpg"
           :width="800"
           :height="537"
-          alt=""
+          :alt="IMAGE_ALT['massage_de_repit.jpg'] ?? ''"
         >
           Massage de répit<br>(à domicile / CHSLD / hôpital)
         </ServiceTile>
@@ -37,7 +37,7 @@
           image="/img/services/kinesitherapie_therapeutique.jpg"
           :width="800"
           :height="565"
-          alt=""
+          :alt="IMAGE_ALT['kinesitherapie_therapeutique.jpg'] ?? ''"
         >
           Orthothérapie - Kinésithérapie / Soin thérapeutique
         </ServiceTile>
@@ -47,7 +47,7 @@
           image="/img/services/drainage_lymphatique.jpg"
           :width="800"
           :height="531"
-          alt=""
+          :alt="IMAGE_ALT['drainage_lymphatique.jpg'] ?? ''"
         >
           Drainage lymphatique
         </ServiceTile>
@@ -57,7 +57,7 @@
           image="/img/services/massage_femme_enceinte.jpg"
           :width="800"
           :height="510"
-          alt=""
+          :alt="IMAGE_ALT['massage_femme_enceinte.jpg'] ?? ''"
         >
           Massage pour femme enceinte
         </ServiceTile>
@@ -67,7 +67,7 @@
           image="/img/services/massage_tissus_profonds.jpg"
           :width="800"
           :height="533"
-          alt=""
+          :alt="IMAGE_ALT['massage_tissus_profonds.jpg'] ?? ''"
         >
           Massage des tissus profonds<br class="max-lg:hidden">
           (Deep Tissue)
@@ -77,7 +77,7 @@
           image="/img/services/massage_thailandais.jpg"
           :width="1280"
           :height="855"
-          alt=""
+          :alt="IMAGE_ALT['massage_thailandais.jpg'] ?? ''"
         >
           Massage thaïlandais sur table
         </ServiceTile>

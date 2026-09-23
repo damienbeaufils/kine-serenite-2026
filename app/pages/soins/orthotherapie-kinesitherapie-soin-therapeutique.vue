@@ -100,7 +100,7 @@ usePageSeo({
     <div class="v-col col-12 sm:col-8">
       <img
         src="/img/services/kinesitherapie_therapeutique.jpg"
-        alt=""
+        :alt="IMAGE_ALT['kinesitherapie_therapeutique.jpg']"
         width="800"
         height="565"
         loading="lazy"
@@ -160,7 +160,7 @@ usePageSeo({
     <div class="v-col col-12 sm:col-8">
       <img
         src="/img/services/ventouses.jpg"
-        alt=""
+        :alt="IMAGE_ALT['ventouses.jpg']"
         width="800"
         height="600"
         loading="lazy"

@@ -11,7 +11,7 @@ usePageSeo({
     <div class="v-col col-12 sm:col-4">
       <img
         src="/img/services/massage_thailandais_1171.jpg"
-        alt=""
+        :alt="IMAGE_ALT['massage_thailandais_1171.jpg']"
         width="1920"
         height="1280"
         loading="lazy"
@@ -22,7 +22,7 @@ usePageSeo({
     <div class="v-col col-12 sm:col-4">
       <img
         src="/img/services/massage_thailandais_1215.jpg"
-        alt=""
+        :alt="IMAGE_ALT['massage_thailandais_1215.jpg']"
         width="1920"
         height="1280"
         loading="lazy"
@@ -33,7 +33,7 @@ usePageSeo({
     <div class="v-col col-12 sm:col-4">
       <img
         src="/img/services/massage_thailandais_1198.jpg"
-        alt=""
+        :alt="IMAGE_ALT['massage_thailandais_1198.jpg']"
         width="1920"
         height="1280"
         loading="lazy"
@@ -56,7 +56,7 @@ usePageSeo({
     <div class="v-col col-12 sm:col-6">
       <img
         src="/img/services/massage_thailandais_1191.jpg"
-        alt=""
+        :alt="IMAGE_ALT['massage_thailandais_1191.jpg']"
         width="1920"
         height="1280"
         loading="lazy"
@@ -67,7 +67,7 @@ usePageSeo({
     <div class="v-col col-12 sm:col-6">
       <img
         src="/img/services/massage_thailandais_1233.jpg"
-        alt=""
+        :alt="IMAGE_ALT['massage_thailandais_1233.jpg']"
         width="1920"
         height="1280"
         loading="lazy"

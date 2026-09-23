@@ -50,7 +50,7 @@ usePageSeo({
     <div class="v-col col-12 sm:col-8">
       <img
         src="/img/services/massage_femme_enceinte.jpg"
-        alt=""
+        :alt="IMAGE_ALT['massage_femme_enceinte.jpg']"
         width="800"
         height="510"
         loading="lazy"

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { PRERENDER_ROUTES } from '../shared/utils/routes'
-import { SITE_DESCRIPTION, SITE_TITLE } from '../shared/utils/site'
+import { SITE_TITLE } from '../shared/utils/site'
 import { baseline } from './helpers/baseline'
 import { loadRoute, normalize } from './helpers/output'
 
@@ -35,6 +35,16 @@ describe('site-wide head', () => {
     expect(content('meta[property="og:type"]')).toBe('website')
     expect(content('meta[property="og:site_name"]')).toBe(SITE_TITLE)
   })
+
+  it('adds the social image, locale and card type', () => {
+    expect(content('meta[property="og:locale"]')).toBe('fr_CA')
+    expect(content('meta[property="og:image"]')).toBe('https://kine-serenite.ca/img/virginie_dang_massage_2026.png')
+    expect(content('meta[property="og:image:width"]')).toBe('1531')
+    expect(content('meta[property="og:image:height"]')).toBe('532')
+    expect(content('meta[property="og:image:type"]')).toBe('image/png')
+    expect(content('meta[property="og:image:alt"]')).toMatch(/^Vous offrir un moment de répit/)
+    expect(content('meta[name="twitter:card"]')).toBe('summary_large_image')
+  })
 })
 
 describe.each(PRERENDER_ROUTES)('%s head', (route) => {
@@ -60,8 +70,9 @@ describe.each(PRERENDER_ROUTES)('%s head', (route) => {
     expect($('link[rel="canonical"]').attr('href')).toBe(expected.canonical)
   })
 
-  it('keeps the site-wide Open Graph title and description', () => {
-    expect($('meta[property="og:title"]').attr('content')).toBe(SITE_TITLE)
-    expect($('meta[property="og:description"]').attr('content')).toBe(SITE_DESCRIPTION)
+  it('shares the page title, description and URL on social networks', () => {
+    expect($('meta[property="og:title"]').attr('content')).toBe(normalize(expected.title))
+    expect($('meta[property="og:description"]').attr('content')).toBe(expected.description)
+    expect($('meta[property="og:url"]').attr('content')).toBe(expected.canonical)
   })
 })

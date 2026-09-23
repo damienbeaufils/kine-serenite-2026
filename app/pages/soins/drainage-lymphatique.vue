@@ -53,7 +53,7 @@ usePageSeo({
     <div class="v-col col-12 sm:col-8">
       <img
         src="/img/services/drainage_lymphatique.jpg"
-        alt=""
+        :alt="IMAGE_ALT['drainage_lymphatique.jpg']"
         width="800"
         height="531"
         loading="lazy"
