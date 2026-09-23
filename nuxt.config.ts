@@ -11,6 +11,10 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  ui: {
+    colorMode: false
+  },
+
   routeRules: {
     '/': { prerender: true }
   },
@@ -30,6 +34,23 @@ export default defineNuxtConfig({
         commaDangle: 'never',
         braceStyle: '1tbs'
       }
+    }
+  },
+
+  fonts: {
+    defaults: {
+      subsets: ['latin', 'latin-ext']
+    },
+    families: [
+      { name: 'Lora', provider: 'google', weights: [400, 500, 600, 700], styles: ['normal', 'italic'] },
+      { name: 'Sofia', provider: 'google', weights: [400], styles: ['normal'] }
+    ]
+  },
+
+  icon: {
+    provider: 'none',
+    clientBundle: {
+      scan: true
     }
   }
 })

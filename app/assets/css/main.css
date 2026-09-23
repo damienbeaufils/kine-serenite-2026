@@ -2,17 +2,150 @@
 @import "@nuxt/ui";
 
 @theme static {
-  --font-sans: 'Public Sans', sans-serif;
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 960px;
+  --breakpoint-lg: 1264px;
+  --breakpoint-xl: 1904px;
+  --breakpoint-2xl: initial;
 
-  --color-green-50: #EFFDF5;
-  --color-green-100: #D9FBE8;
-  --color-green-200: #B3F5D1;
-  --color-green-300: #75EDAE;
-  --color-green-400: #00DC82;
-  --color-green-500: #00C16A;
-  --color-green-600: #00A155;
-  --color-green-700: #007F45;
-  --color-green-800: #016538;
-  --color-green-900: #0A5331;
-  --color-green-950: #052E16;
+  --font-sans: "Lora", serif;
+  --font-cursive: "Sofia", cursive;
+
+  --color-kine-green: #45818e;
+  --color-kine-yellow: #fada93;
+  --color-kine-grey: #999999;
+  --color-kine-light-grey: #eeeeee;
+  --color-vuetify-red: #f44336;
+  --color-vuetify-link: #1976d2;
+
+  /* Nuxt UI primary: the 500 shade is what `color="primary"` renders in light mode. */
+  --color-brand-50: #f6f9f9;
+  --color-brand-100: #ecf2f4;
+  --color-brand-200: #d0e0e3;
+  --color-brand-300: #b5cdd2;
+  --color-brand-400: #7da7b0;
+  --color-brand-500: #45818e;
+  --color-brand-600: #3b6e79;
+  --color-brand-700: #305a63;
+  --color-brand-800: #26474e;
+  --color-brand-900: #1c3439;
+  --color-brand-950: #112024;
+
+  --shadow-elevation-2: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  --shadow-elevation-8: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  --shadow-elevation-12: 0 7px 8px -4px rgba(0, 0, 0, 0.2), 0 12px 17px 2px rgba(0, 0, 0, 0.14), 0 5px 22px 4px rgba(0, 0, 0, 0.12);
+
+  --ease-vuetify: cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+@layer base {
+  :root {
+    --ui-bg: #ffffff;
+    --ui-text: rgba(0, 0, 0, 0.87);
+  }
+
+  html {
+    overflow-y: scroll;
+    font-size: 16px;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.87);
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Tailwind's preflight flattens headings and lists; Vuetify 2 keeps browser sizes with zero margins. */
+  h1 { font-size: 2em; font-weight: 700; }
+  h2 { font-size: 1.5em; font-weight: 700; }
+  h3 { font-size: 1.17em; font-weight: 700; }
+  p { margin-bottom: 16px; }
+  ul, ol { padding-left: 24px; }
+  ul { list-style: disc; }
+  ol { list-style: decimal; }
+  ul ul { list-style: circle; }
+  a { color: var(--color-vuetify-link); text-decoration: underline; }
+}
+
+/* Vuetify's spacing helpers are !important; keeping these classes below the utilities layer gives `mt-1`, `py-2`, `p-5` the same precedence over them. */
+@layer components {
+  .v-container {
+    width: 100%;
+    padding: 12px;
+    margin-inline: auto;
+  }
+
+  @media (width >= 960px) {
+    .v-container { max-width: 900px; }
+  }
+
+  @media (width >= 1264px) {
+    .v-container { max-width: 1185px; }
+  }
+
+  @media (width >= 1904px) {
+    .v-container { max-width: 1785px; }
+  }
+
+  .v-row {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1 1 auto;
+    margin: -12px;
+  }
+
+  .v-col {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .card-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 16px;
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: 0.0125em;
+    line-height: 2rem;
+    word-break: normal;
+  }
+
+  .card-subtitle,
+  .card-text {
+    padding: 16px;
+    font-size: 1rem;
+    line-height: 1.375rem;
+    letter-spacing: 0.0071428571em;
+  }
+
+  .card-text { width: 100%; }
+
+  .card-actions {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+  }
+
+  .card-title + .card-subtitle,
+  .card-title + .card-text,
+  .card-subtitle + .card-text { padding-top: 0; }
+
+  .card-title + .card-subtitle { margin-top: -16px; }
+}
+
+@utility col-3 { flex: 0 0 25%; max-width: 25%; }
+@utility col-4 { flex: 0 0 33.3333333333%; max-width: 33.3333333333%; }
+@utility col-6 { flex: 0 0 50%; max-width: 50%; }
+@utility col-8 { flex: 0 0 66.6666666667%; max-width: 66.6666666667%; }
+@utility col-9 { flex: 0 0 75%; max-width: 75%; }
+@utility col-12 { flex: 0 0 100%; max-width: 100%; }
+
+/* Vuetify's type scale is !important, so it beats the card metrics it is combined with. */
+@utility text-h4 { font-size: 2.125rem !important; line-height: 2.5rem !important; letter-spacing: 0.0073529412em !important; }
+@utility text-h5 { font-size: 1.5rem !important; line-height: 2rem !important; letter-spacing: normal !important; }
+@utility text-h6 { font-size: 1.25rem !important; line-height: 2rem !important; letter-spacing: 0.0125em !important; }
+@utility text-subtitle-1 { font-size: 1rem !important; line-height: 1.75rem !important; letter-spacing: 0.009375em !important; }

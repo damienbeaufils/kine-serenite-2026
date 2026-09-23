@@ -15,5 +15,10 @@ export default withNuxt(
         ]
       }
     }
+  },
+  {
+    rules: {
+      'better-tailwindcss/no-unknown-classes': ['error', { detectComponentClasses: true }]
+    }
   }
 )
