@@ -1,3 +1,4 @@
+import type { PrerenderRoute } from 'nitropack'
 import { PRERENDER_ROUTES } from './shared/utils/routes'
 import { SITE_TITLE, SITE_URL } from './shared/utils/site'
 
@@ -80,7 +81,20 @@ export default defineNuxtConfig({
 
   nitro: {
     prerender: {
-      routes: [...PRERENDER_ROUTES, '/sitemap.xml']
+      routes: [...PRERENDER_ROUTES, '/sitemap.xml', '/__404/']
+    },
+    hooks: {
+      // Nuxt always prerenders /404.html as an empty SPA shell. Write the server-rendered
+      // error page of an unknown route there instead; clearing the error here, before Nitro
+      // records it, keeps the build from failing on the expected 404.
+      'prerender:generate'(route: PrerenderRoute) {
+        if (route.route === '/404.html') {
+          route.skip = true
+        } else if (route.route === '/__404/') {
+          delete route.error
+          route.fileName = '/404.html'
+        }
+      }
     }
   },
 
@@ -119,7 +133,12 @@ export default defineNuxtConfig({
 
   sitemap: {
     xsl: false,
-    exclude: ['/soins/massage-thailandais-sur-table', '/soins/massage-thailandais-sur-table/**'],
+    exclude: [
+      '/soins/massage-thailandais-sur-table',
+      '/soins/massage-thailandais-sur-table/**',
+      '/__404',
+      '/__404/**'
+    ],
     defaults: {
       changefreq: 'monthly',
       priority: 0.8
