@@ -44,4 +44,10 @@ describe('home page sections', () => {
     expect($('main table')).toHaveLength(2)
     expect($('main a[href="/soins/massage-de-repit/"]').first().text().trim()).toBe('Massage de répit')
   })
+
+  it('introduces Virginie with her training list', () => {
+    expect($('#a-propos h2').text().trim()).toBe('À propos')
+    expect($('#a-propos img').attr('src')).toBe('/img/virginie_dang_photo_profil.jpg')
+    expect($('#a-propos ul li')).toHaveLength(12)
+  })
 })
