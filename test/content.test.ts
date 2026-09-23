@@ -18,3 +18,14 @@ describe.each(CONTENT_ROUTES)('%s content', (route) => {
     expect(normalize($('main').text())).toBe(expected.text)
   })
 })
+
+describe('home page sections', () => {
+  const $ = loadRoute('/')
+
+  it('shows the hero banner, with a narrow image below 600px', () => {
+    const picture = $('main picture')
+    expect(picture.find('source[media="(min-width: 600px)"]').attr('srcset')).toBe('/img/virginie_dang_massage_2026.png')
+    expect(picture.find('img').attr('src')).toBe('/img/virginie_dang_massage_2026_mobile.png')
+    expect(picture.find('img').attr('alt')).toMatch(/^Vous offrir un moment de répit/)
+  })
+})

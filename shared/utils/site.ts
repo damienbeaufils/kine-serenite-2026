@@ -7,3 +7,5 @@ export const SITE_DESCRIPTION = 'Massage thaïlandais sur table, Massage des tis
 export function pageTitle(name: string): string {
   return `${name} | Virginie Dang | Masso-kinésithérapeute & Orthothérapeute`
 }
+
+export const HERO_ALT = 'Vous offrir un moment de répit où votre corps est accompagné dans le mouvement, afin de préserver votre autonomie avec douceur et bienveillance.'

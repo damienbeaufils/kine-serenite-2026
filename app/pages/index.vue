@@ -3,5 +3,7 @@ usePageSeo({ title: SITE_TITLE, description: SITE_DESCRIPTION, path: '/' })
 </script>
 
 <template>
-  <div />
+  <div>
+    <HomeIntroduction class="mb-5" />
+  </div>
 </template>
