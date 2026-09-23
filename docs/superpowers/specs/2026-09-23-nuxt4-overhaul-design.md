@@ -1,7 +1,7 @@
 # kine-serenite.ca overhaul: Nuxt 4, Node 24, Nuxt UI
 
 - Date: 2026-09-23
-- Status: approved design, pending written-spec review
+- Status: approved
 - Reference: `kine-serenite` repo, branch `new-version-may-2026`, commit `9236071`
   (the commit deployed to `gh-pages` on 2026-09-16, which is what kine-serenite.ca serves today)
 
@@ -93,42 +93,52 @@ baseline.
 
 ```
 app/
-  app.vue                 UApp › AppHeader › centred content column › AppFooter; site-wide head
+  app.vue                 UApp › NuxtLayout › NuxtPage; site-wide head
   app.config.ts           Nuxt UI theme overrides (button, card, dropdownMenu)
-  error.vue               French 404 page
+  error.vue               French 404 page, inside the default layout
+  layouts/default.vue     AppHeader › centred content column › AppFooter
   assets/css/main.css     Tailwind + Nuxt UI imports, @theme tokens, Vuetify base layer and type scale
   components/
     AppHeader.vue
     AppFooter.vue
     InfoCard.vue          grey card with floating teal header (5 uses in the rates section)
-    ServicePage.vue       teal-title card shell shared by the 7 soins pages and the policies page
+    ServicePage.vue       teal-title card shell shared by the 7 soins pages, the policies page and the 404
     home/
       HomeIntroduction.vue
       HomeRates.vue
+      RatesTable.vue      Vuetify simple-table look, used twice in the rates section
       HomeAbout.vue
       HomeServices.vue
       ServiceTile.vue     homepage service tile with hover elevation; optional link
   composables/
     usePageSeo.ts         title, description, canonical and per-page og:* from one call
+  utils/image-alt.ts      alt text per image file
   pages/
     index.vue
     politiques-annulation-confidentialite.vue
     soins/*.vue           7 pages, same file names as the old repo
+shared/utils/
+  site.ts                 site URL, title, description, hero alt, page title helper
+  routes.ts               the 9 routes, read by nuxt.config.ts and the tests
 public/                   every tracked file of the old static/ except README.md, plus sw.js (6.3)
 test/
-  fixtures/seo-baseline.json
+  fixtures/               seo-baseline.json, static-files.json
+  helpers/                output loader, baseline loader
   *.test.ts               run against .output/public
-docs/superpowers/specs/   this document
+docs/superpowers/         this spec and the implementation plan
 .github/workflows/ci.yml
 .nvmrc
 ```
+
+The header and footer live in the default layout rather than in `app.vue`, so `error.vue` renders
+inside the same shell through `<NuxtLayout>`.
 
 ### 3.4 Prerendering
 
 `nuxt generate` only prerenders pages reachable by links from `/`. The anti-stress and Thai
 pages are linked from nowhere, so a crawl-only build would drop them without any error.
-`nuxt.config.ts` lists all 9 routes in `nitro.prerender.routes`, and a test asserts that
-each produces `index.html`.
+`nuxt.config.ts` lists all 9 routes in `nitro.prerender.routes` (from `shared/utils/routes.ts`),
+and a test asserts that each produces `index.html`.
 
 ### 3.5 Routes
 
@@ -229,8 +239,8 @@ component; these anchor the tokens.
 
 ## 5. Page composition
 
-- `app.vue`: `UApp` wrapping `AppHeader`, the centred content column with `<NuxtPage />`,
-  and `AppFooter`. Holds site-wide head tags (6.1).
+- `app.vue`: `UApp` wrapping `<NuxtLayout>` and `<NuxtPage />`. Holds site-wide head tags (6.1).
+- `layouts/default.vue`: `AppHeader`, a `<main>` with the centred content column, `AppFooter`.
 - `index.vue`: `HomeIntroduction` (mb 20px), `HomeRates` (mb 40px), `HomeAbout` (mb 40px),
   `HomeServices`, in that order.
 - `HomeRates`: two `InfoCard`s (care types, rates with two tables and travel fees, insurance
@@ -312,6 +322,11 @@ lymphatique, Soin thérapeutique`.
 - 404: GitHub Pages serves the generated `404.html` with HTTP 404 for unknown paths. It
   renders `error.vue` inside the site header and footer: "Page introuvable", a link back to
   Accueil, and `robots: noindex`. Today GitHub's generic 404 page is shown.
+  Nuxt prerenders `/404.html` as an empty SPA shell (no server render), and it has no option
+  to change that. A Nitro `prerender:generate` hook in `nuxt.config.ts` skips that shell and
+  writes the server-rendered error page of an internal unknown route (`/__404/`) to
+  `404.html` instead, so the 404 content and its `noindex` are in the static HTML. The
+  internal route is excluded from the sitemap and leaves no file of its own.
 
 ## 7. Testing and verification
 
@@ -348,9 +363,10 @@ Run after `nuxt generate`, against `.output/public`:
 - Capture protocol: wait for `document.fonts.ready`; scroll through the page to trigger lazy
   images, then back to the top; disable transitions and animations; same Chrome build for
   both sides.
-- Pass 1, agent-browser: `agent-browser diff url <old> <new> --screenshot --full` per
-  cell, plus a geometry and computed-style dump of key elements located semantically
-  (heading text, nav labels, table cells, images by `src`), compared at ±1px.
+- Pass 1, agent-browser: full-page `agent-browser screenshot --full` of both sites per
+  cell, diffed by a scratch pixelmatch script (the same one pass 2 uses, so both passes apply
+  the same threshold), plus a geometry and computed-style dump of every element with its own
+  text and every image, compared at ±1px.
 - Pass 2, Chrome DevTools MCP: The same matrix run independently: `resize_page`,
   `navigate_page`, `evaluate_script`, full-page `take_screenshot`, pixel diff by a scratch
   script. Plus `lighthouse_audit` on every route for both sites, `list_console_messages`
@@ -401,14 +417,16 @@ expiring 2026-11-18. The domain is **not** verified on the account. Apex A recor
 3. Pre-cutover check: The `github.io` URL serves the site under `/kine-serenite-2026/`,
    which breaks absolute `/img` and `/_nuxt` paths, so it is not a valid test. Instead,
    download the CI artifact, serve it locally, re-run the tests and a visual spot check.
-4. Cutover, at a quiet hour: remove `kine-serenite.ca` from the old repo's Pages settings
-   (the only change to the old repo, and a setting rather than code); add it to the new repo;
-   wait for the certificate (minutes, up to about an hour); enforce HTTPS. DNS is unchanged.
+4. Cutover, at a quiet hour: turn off GitHub Pages on the old repo, which releases the
+   domain (the only change to the old repo, and a setting rather than code). Removing the
+   custom domain from a branch-based Pages site instead would make GitHub commit a `CNAME`
+   change to the old `gh-pages` branch. Then add the domain to the new repo, wait for the
+   certificate (minutes, up to about an hour) and enforce HTTPS. DNS is unchanged.
 5. Live checks: Every route returns 200; `/soins/x` 301-redirects to `/soins/x/`;
    canonicals, sitemap, robots and JSON-LD are live; the kill-switch `sw.js` is served;
    HTTPS is enforced; an unknown URL returns the French 404.
-6. Rollback: The old `gh-pages` branch is untouched; moving the domain back takes
-   minutes.
+6. Rollback: The old `gh-pages` branch is untouched; removing the domain from the new repo
+   and turning the old repo's Pages back on with its domain takes minutes.
 
 ## 9. Risks
 
@@ -430,22 +448,22 @@ This spec is the repository's first commit. The implementation plan details each
 follows: one commit per task, each leaving lint, typecheck, generate and tests green.
 
 1. Scaffold as created (baseline)
-2. Toolchain: `.nvmrc`, latest dependencies, TypeScript pin and Renovate rule
-3. Template cleanup (demo components, template licence, simple-icons)
-4. Static assets from the old `static/`
-5. Theme tokens, breakpoints and Vuetify base layer
-6. Nuxt UI component theme
-7. Site head, `usePageSeo`, SEO test harness and baseline fixture
-8. App shell: header, footer, content column
-9. Homepage sections, one commit each
-10. `ServicePage`, then one commit per soins page and one for the policies page
+2. Toolchain: `.nvmrc`, latest dependencies, TypeScript pin, Renovate rule, test harness
+3. Template cleanup (demo components, template licence, simple-icons) and static assets
+4. Theme tokens, breakpoints, Vuetify base layer, self-hosted fonts, local icons
+5. Site head, `usePageSeo`, route list and SEO baseline tests
+6. `ServicePage` with the card theme, and the policies page
+7. App shell: layout, header, footer, button and menu theme
+8. One commit per soins page
+9. Homepage sections, one commit each (services last, with the link checks)
+10. Sitemap and robots
 11. French 404
-12. Sitemap and robots
-13. JSON-LD
-14. Social meta and alt text
-15. Service worker kill switch
-16. CI and deploy workflow
-17. One commit per verification fix
-18. README
+12. JSON-LD
+13. Social meta and alt text
+14. Service worker kill switch
+15. CI and deploy workflow
+16. One commit per verification fix
+17. README
 
-A comment-hygiene pass runs before any push.
+Each page exists before the first commit that links to it, because `nuxt generate` crawls
+links and fails on a missing page. A comment-hygiene pass runs before any push.

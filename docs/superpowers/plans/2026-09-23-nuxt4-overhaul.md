@@ -90,8 +90,6 @@ test/output.test.ts  test/assets.test.ts  test/head.test.ts  test/content.test.t
 test/shell.test.ts   test/links.test.ts   test/sitemap.test.ts  test/schema.test.ts  test/images.test.ts
 ```
 
-The spec places the header and footer in `app.vue`. This plan puts them in `app/layouts/default.vue` so `error.vue` can reuse the same shell through `<NuxtLayout>`; `app.vue` keeps the site-wide head.
-
 Task order avoids dangling internal links: `nuxt generate` crawls links, so a page must exist before anything links to it. The policies page comes before the header, service pages before the homepage sections that link to them.
 
 ---
@@ -495,9 +493,10 @@ export default defineConfig({
 ```ts
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import * as cheerio from 'cheerio'
 
-export const OUTPUT_DIR = process.env.SITE_OUTPUT_DIR ?? join(import.meta.dirname, '..', '..', '.output', 'public')
+export const OUTPUT_DIR = process.env.SITE_OUTPUT_DIR ?? fileURLToPath(new URL('../../.output/public', import.meta.url))
 
 export function outputPath(relative: string): string {
   return join(OUTPUT_DIR, relative)
@@ -2346,6 +2345,8 @@ git commit -m "✨ add the respite massage page"
 
 **Files:** Create `app/pages/soins/massage-deep-tissue.vue`; Modify `shared/utils/routes.ts` (add `'/soins/massage-deep-tissue/',`).
 
+The old page's scoped `.v-card + p { margin-top: 1rem }` becomes `class="mt-4"` on the paragraph after the yellow card: a custom class for that selector would fail the `better-tailwindcss/no-unknown-classes` lint rule.
+
 - [ ] **Step 1: Add the route; Step 2: `pnpm generate` fails with a 404 on the route**
 - [ ] **Step 3: Write the page**
 
@@ -2459,7 +2460,7 @@ usePageSeo({
           avant d'arriver aux tissus profonds ! »</b>
       </p>
 
-      <UCard class="callout">
+      <UCard>
         <div class="card-text rounded-[4px] bg-kine-yellow text-center text-subtitle-1 font-bold text-kine-green">
           <u>Le ressenti de ce soin :</u> on rentre petit à petit dans vos
           tissus, tout en <b>douceur et profondeur</b>. Je vais « peser »
@@ -2470,7 +2471,7 @@ usePageSeo({
         </div>
       </UCard>
 
-      <p>
+      <p class="mt-4">
         <b>Évidemment, chaque personne a un seuil de tolérance différent et
           il est important de communiquer pendant le soin si la pression du
           soin est trop forte pour vous.
@@ -2591,10 +2592,6 @@ small li {
 }
 
 ul + p {
-  margin-top: 1rem;
-}
-
-.callout + p {
   margin-top: 1rem;
 }
 </style>
@@ -4252,7 +4249,9 @@ git commit -m "🔍 generate the sitemap and robots.txt from the route list"
 
 **Files:**
 - Create: `app/error.vue`
-- Modify: `nuxt.config.ts` (`experimental.prerenderErrorPages`), `test/output.test.ts`
+- Modify: `nuxt.config.ts` (prerender route, `prerender:generate` hook, sitemap exclusion), `test/output.test.ts`
+
+Nuxt 4.5 always prerenders `/404.html` as an empty SPA shell: `@nuxt/nitro-server` adds the route and forces `noSSR` for it (`PRERENDER_NO_SSR_ROUTES` in `dist/runtime/utils/renderer/app.mjs`), and no config option changes that. So the build prerenders an internal unknown route, `/__404/`, which Nuxt renders server-side through `error.vue` with status 404, and a Nitro `prerender:generate` hook writes that response to `404.html` in place of the shell. The hook runs before Nitro records the 404 as a failed route (`nitropack/dist/core/index.mjs`, `generateRoute`), so clearing `route.error` there keeps `failOnError` (which Nuxt turns on) from failing the build.
 
 - [ ] **Step 1: Write the failing test** (append to `test/output.test.ts`)
 
@@ -4260,20 +4259,27 @@ git commit -m "🔍 generate the sitemap and robots.txt from the route list"
 import * as cheerio from 'cheerio'
 
 describe('404.html', () => {
+  const $ = () => cheerio.load(readFileSync(outputPath('404.html'), 'utf8'))
+
   it('is a prerendered French page that search engines skip', () => {
-    const $ = cheerio.load(readFileSync(outputPath('404.html'), 'utf8'))
-    expect($('html').attr('lang')).toBe('fr')
-    expect($('h1').text().trim()).toBe('Page introuvable')
-    expect($('meta[name="robots"]').attr('content')).toMatch(/noindex/)
-    expect($('main a[href="/"]').text().trim()).toBe('Retour à l’accueil')
-    expect($('header nav a')).toHaveLength(4)
+    expect($()('html').attr('lang')).toBe('fr')
+    expect($()('h1').text().trim()).toBe('Page introuvable')
+    expect($()('meta[name="robots"]').attr('content')).toMatch(/noindex/)
+    expect($()('link[rel="canonical"]')).toHaveLength(0)
+    expect($()('main a[href="/"]').text().trim()).toBe('Retour à l’accueil')
+    expect($()('header nav a')).toHaveLength(4)
+  })
+
+  it('leaves no page behind for the internal route it is rendered from', () => {
+    expect(existsSync(outputPath('__404/index.html'))).toBe(false)
+    expect(readOutput('sitemap.xml')).not.toContain('__404')
   })
 })
 ```
 
-Move the new import to the top of the file with the others.
+Move the new import to the top of the file with the others, and add `readOutput` to the `./helpers/output` import.
 
-- [ ] **Step 2: Run it** — Expected: FAIL (`404.html` is an empty SPA shell).
+- [ ] **Step 2: Run it** — Expected: FAIL (`404.html` is an empty SPA shell with no `h1`).
 
 - [ ] **Step 3: Write `app/error.vue`**
 
@@ -4307,14 +4313,47 @@ useRobotsRule({ noindex: true })
 </template>
 ```
 
-- [ ] **Step 4: Enable error-page prerendering in `nuxt.config.ts`**
+- [ ] **Step 4: Render the error page into `404.html` from `nuxt.config.ts`**
 
-Inside `experimental`, add `prerenderErrorPages: true`.
+Change the `nitro` block to:
+
+```ts
+  nitro: {
+    prerender: {
+      routes: [...PRERENDER_ROUTES, '/sitemap.xml', '/__404/']
+    },
+    hooks: {
+      // Nuxt always prerenders /404.html as an empty SPA shell. Write the server-rendered
+      // error page of an unknown route there instead; clearing the error here, before Nitro
+      // records it, keeps the build from failing on the expected 404.
+      'prerender:generate'(route) {
+        if (route.route === '/404.html') {
+          route.skip = true
+        } else if (route.route === '/__404/') {
+          delete route.error
+          route.fileName = '/404.html'
+        }
+      }
+    }
+  },
+```
+
+and add `'/__404', '/__404/**'` to `sitemap.exclude`.
+
+If `pnpm typecheck` rejects the hook's parameter type, type it with `import type { PrerenderRoute } from 'nitropack'`.
 
 - [ ] **Step 5: Run the tests and check a real 404**
 
 Run: `pnpm lint --fix && pnpm generate && pnpm test` — Expected: PASS.
-With `pnpm preview`: `curl -s -o /dev/null -w '%{http_code}\n' http://localhost:3001/nope/` → `404`; open it with agent-browser at 1440 and check the page shows the header, the teal "Page introuvable" card and the footer.
+With `pnpm preview`: `curl -s -o /dev/null -w '%{http_code}\n' http://localhost:3001/nope/` → `404`. Then:
+
+```bash
+export AGENT_BROWSER_SESSION=task20
+agent-browser set viewport 1440 900 && agent-browser open http://localhost:3001/nope/ && agent-browser wait --load load && agent-browser wait 1000
+agent-browser screenshot "$V/out/404-1440.png"
+agent-browser console | grep -iE 'hydrat|error' ; echo "console messages above (expected none)"
+```
+Expected: the screenshot shows the header, the teal "Page introuvable" card and the footer, and the console has no hydration message or error.
 
 - [ ] **Step 6: Full check and commit**
 
@@ -4917,18 +4956,18 @@ The `github.io` URL serves the site under `/kine-serenite-2026/`, which breaks a
 
 ```bash
 RUN=$(gh run list --branch main --limit 1 --json databaseId --jq '.[0].databaseId')
-rm -rf /tmp/kine-artifact && mkdir -p /tmp/kine-artifact && gh run download "$RUN" -n github-pages -D /tmp/kine-artifact
-mkdir -p /tmp/kine-artifact/site && tar -xf /tmp/kine-artifact/artifact.tar -C /tmp/kine-artifact/site
+rm -rf $V/artifact && mkdir -p $V/artifact && gh run download "$RUN" -n github-pages -D $V/artifact
+mkdir -p $V/artifact/site && tar -xf $V/artifact/artifact.tar -C $V/artifact/site
 ```
 
 - [ ] **Step 2: Run the tests against it**
 
-Run: `SITE_OUTPUT_DIR=/tmp/kine-artifact/site pnpm test`
+Run: `SITE_OUTPUT_DIR=$V/artifact/site pnpm test`
 Expected: PASS.
 
 - [ ] **Step 3: Visual spot check**
 
-Stop the local preview, serve the artifact on :3001 (`npx serve /tmp/kine-artifact/site --listen 3001 --config $(pwd)/serve.json`), then run `cd $V && ./compare.sh / 1440 900 && ./compare.sh / 390 844 && ./compare.sh /soins/massage-deep-tissue/ 1440 900`.
+Stop the local preview, serve the artifact on :3001 (`pnpm exec serve $V/artifact/site --listen 3001 --config $(pwd)/serve.json`), then run `cd $V && ./compare.sh / 1440 900 && ./compare.sh / 390 844 && ./compare.sh /soins/massage-deep-tissue/ 1440 900`.
 Expected: all `"pass":true`.
 
 ---
@@ -4949,7 +4988,7 @@ Ask: "Switch kine-serenite.ca now? The old repository's Pages site will be turne
 gh api -X DELETE repos/damienbeaufils/kine-serenite/pages
 ```
 
-Turning Pages off releases the domain without GitHub committing a `CNAME` change to the old `gh-pages` branch, which removing the custom domain from a branch-based site would do. This refines the spec's "remove the domain from the old repo's Pages settings"; tell the owner.
+Turning Pages off releases the domain without GitHub committing a `CNAME` change to the old `gh-pages` branch, which removing the custom domain from a branch-based site would do (spec 8.3.4).
 
 - [ ] **Step 4: Attach it to the new repository and wait for HTTPS**
 
