@@ -3,5 +3,6 @@ export const PRERENDER_ROUTES: string[] = [
   '/',
   '/politiques-annulation-confidentialite/',
   '/soins/drainage-lymphatique/',
-  '/soins/massage-anti-stress/'
+  '/soins/massage-anti-stress/',
+  '/soins/massage-de-repit/'
 ]
