@@ -1,3 +1,5 @@
+import { PRERENDER_ROUTES } from './shared/utils/routes'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: [
@@ -9,17 +11,47 @@ export default defineNuxtConfig({
     enabled: true
   },
 
+  app: {
+    head: {
+      htmlAttrs: { lang: 'fr' },
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+      meta: [
+        { name: 'theme-color', content: '#ffffff' }
+      ],
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
+        { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
+        { rel: 'manifest', href: '/site.webmanifest' },
+        { rel: 'mask-icon', href: '/safari-pinned-tab.svg', color: '#4d8591' },
+        { rel: 'shortcut icon', href: '/favicon.ico' }
+      ]
+    }
+  },
+
   css: ['~/assets/css/main.css'],
 
   ui: {
     colorMode: false
   },
 
-  routeRules: {
-    '/': { prerender: true }
+  experimental: {
+    defaults: {
+      nuxtLink: {
+        trailingSlash: 'append'
+      }
+    }
   },
 
   compatibilityDate: '2026-06-30',
+
+  nitro: {
+    prerender: {
+      routes: PRERENDER_ROUTES
+    }
+  },
 
   typescript: {
     nodeTsConfig: {
