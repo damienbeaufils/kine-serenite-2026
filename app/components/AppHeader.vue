@@ -49,7 +49,8 @@ function onCloseAutoFocus(event: Event) {
 </script>
 
 <template>
-  <header class="relative z-0 grow bg-white">
+  <!-- Layout containment, as on Vuetify's toolbar, keeps the menu button's 4px overhang at 320px from scrolling the page sideways. -->
+  <header class="relative z-0 grow bg-white contain-layout">
     <div class="flex h-[100px] items-center px-4 py-1">
       <NuxtLink
         to="/"
