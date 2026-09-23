@@ -43,6 +43,12 @@ export default defineNuxtConfig({
     colorMode: false
   },
 
+  runtimeConfig: {
+    public: {
+      buildYear: new Date().getFullYear()
+    }
+  },
+
   experimental: {
     defaults: {
       nuxtLink: {

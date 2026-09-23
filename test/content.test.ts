@@ -15,6 +15,6 @@ describe.each(CONTENT_ROUTES)('%s content', (route) => {
   })
 
   it('keeps the text of the main area', () => {
-    expect(normalize($('main').length ? $('main').text() : $('#__nuxt').text())).toBe(expected.text)
+    expect(normalize($('main').text())).toBe(expected.text)
   })
 })
