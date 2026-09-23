@@ -81,7 +81,7 @@ export default defineNuxtConfig({
 
   nitro: {
     prerender: {
-      routes: [...PRERENDER_ROUTES, '/sitemap.xml', '/__404/']
+      routes: [...PRERENDER_ROUTES, '/sitemap.xml', '/erreur-404/']
     },
     hooks: {
       // Nuxt always prerenders /404.html as an empty SPA shell. Write the server-rendered
@@ -90,9 +90,12 @@ export default defineNuxtConfig({
       'prerender:generate'(route: PrerenderRoute) {
         if (route.route === '/404.html') {
           route.skip = true
-        } else if (route.route === '/__404/') {
+        } else if (route.route === '/erreur-404/') {
           delete route.error
           route.fileName = '/404.html'
+        } else if (route.route.startsWith('/erreur-404/')) {
+          // Payload-extraction companion route (e.g. _payload.json) crawled from the page above: skip it too.
+          route.skip = true
         }
       }
     }
@@ -136,8 +139,8 @@ export default defineNuxtConfig({
     exclude: [
       '/soins/massage-thailandais-sur-table',
       '/soins/massage-thailandais-sur-table/**',
-      '/__404',
-      '/__404/**'
+      '/erreur-404',
+      '/erreur-404/**'
     ],
     defaults: {
       changefreq: 'monthly',

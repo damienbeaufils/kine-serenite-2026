@@ -31,7 +31,7 @@ describe('404.html', () => {
   })
 
   it('leaves no page behind for the internal route it is rendered from', () => {
-    expect(existsSync(outputPath('__404/index.html'))).toBe(false)
-    expect(readOutput('sitemap.xml')).not.toContain('__404')
+    expect(existsSync(outputPath('erreur-404'))).toBe(false)
+    expect(readOutput('sitemap.xml')).not.toContain('erreur-404')
   })
 })

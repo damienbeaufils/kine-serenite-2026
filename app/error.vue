@@ -8,9 +8,7 @@ const props = defineProps<{
 const heading = computed(() => props.error.status === 404 ? 'Page introuvable' : 'Une erreur est survenue')
 
 useSeoMeta({ title: () => pageTitle(heading.value) })
-// useRobotsRule throws here: @nuxtjs/robots skips populating its request context for any
-// path starting with "/__" (see injectContext.js), which is exactly the internal route this
-// page prerenders from.
+// @nuxtjs/robots skips Nuxt's /__nuxt_error render, so useRobotsRule has no context here.
 useHead({ meta: [{ name: 'robots', content: 'noindex' }] })
 </script>
 
