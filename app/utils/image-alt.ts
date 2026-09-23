@@ -1,4 +1,4 @@
-export const IMAGE_ALT: Record<string, string> = {
+export const IMAGE_ALT = {
   'logo': 'Kiné-Sérénité massothérapie, accueil',
   'drainage_lymphatique.jpg': 'Drainage lymphatique : mains massant délicatement la main et le poignet d’une personne allongée',
   'kinesitherapie_therapeutique.jpg': 'Soin thérapeutique : massothérapeute travaillant l’omoplate d’une personne allongée sur le ventre',
@@ -13,4 +13,4 @@ export const IMAGE_ALT: Record<string, string> = {
   'massage_thailandais_1198.jpg': 'Massage thaïlandais sur table : étirement de la jambe d’un client allongé sur le ventre',
   'massage_thailandais_1215.jpg': 'Massage thaïlandais sur table : la massothérapeute, debout sur la table, étire la jambe d’un client',
   'massage_thailandais_1233.jpg': 'Massage thaïlandais sur table : mobilisation de la jambe pliée d’un client allongé sur le dos'
-}
+} as const satisfies Record<string, string>
