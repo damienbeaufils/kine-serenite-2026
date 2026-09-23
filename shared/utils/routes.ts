@@ -6,5 +6,6 @@ export const PRERENDER_ROUTES: string[] = [
   '/soins/massage-anti-stress/',
   '/soins/massage-de-repit/',
   '/soins/massage-deep-tissue/',
-  '/soins/massage-femme-enceinte/'
+  '/soins/massage-femme-enceinte/',
+  '/soins/massage-thailandais-sur-table/'
 ]
