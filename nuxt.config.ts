@@ -1,10 +1,13 @@
 import { PRERENDER_ROUTES } from './shared/utils/routes'
+import { SITE_TITLE, SITE_URL } from './shared/utils/site'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
-    '@nuxt/ui'
+    '@nuxt/ui',
+    '@nuxtjs/sitemap',
+    '@nuxtjs/robots'
   ],
 
   components: [
@@ -43,6 +46,13 @@ export default defineNuxtConfig({
     }
   },
 
+  site: {
+    url: SITE_URL,
+    name: SITE_TITLE,
+    defaultLocale: 'fr',
+    trailingSlash: true
+  },
+
   ui: {
     colorMode: false
   },
@@ -51,6 +61,11 @@ export default defineNuxtConfig({
     public: {
       buildYear: new Date().getFullYear()
     }
+  },
+
+  routeRules: {
+    '/': { sitemap: { priority: 1 } },
+    '/politiques-annulation-confidentialite': { sitemap: { priority: 0.7 } }
   },
 
   experimental: {
@@ -65,7 +80,7 @@ export default defineNuxtConfig({
 
   nitro: {
     prerender: {
-      routes: PRERENDER_ROUTES
+      routes: [...PRERENDER_ROUTES, '/sitemap.xml']
     }
   },
 
@@ -99,6 +114,15 @@ export default defineNuxtConfig({
     provider: 'none',
     clientBundle: {
       scan: true
+    }
+  },
+
+  sitemap: {
+    xsl: false,
+    exclude: ['/soins/massage-thailandais-sur-table', '/soins/massage-thailandais-sur-table/**'],
+    defaults: {
+      changefreq: 'monthly',
+      priority: 0.8
     }
   }
 })
