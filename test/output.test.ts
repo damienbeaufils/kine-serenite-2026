@@ -39,3 +39,17 @@ describe('404.html', () => {
     expect(readOutput('404.html')).not.toContain('_payload.json')
   })
 })
+
+describe('sw.js', () => {
+  const sw = () => readFileSync(outputPath('sw.js'), 'utf8')
+
+  it('replaces the old Workbox worker with one that removes itself', () => {
+    expect(sw()).toContain('skipWaiting()')
+    expect(sw()).toContain('caches.delete')
+    expect(sw()).toContain('registration.unregister()')
+  })
+
+  it('loads nothing from the old Workbox CDN', () => {
+    expect(sw()).not.toMatch(/importScripts|workbox/i)
+  })
+})
