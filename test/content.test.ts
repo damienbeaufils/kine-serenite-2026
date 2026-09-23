@@ -3,10 +3,7 @@ import { PRERENDER_ROUTES } from '../shared/utils/routes'
 import { baseline } from './helpers/baseline'
 import { loadRoute, normalize } from './helpers/output'
 
-// The home page is assembled over Tasks 15 to 18; Task 18 removes this exclusion.
-const CONTENT_ROUTES = PRERENDER_ROUTES.filter(route => route !== '/')
-
-describe.each(CONTENT_ROUTES)('%s content', (route) => {
+describe.each(PRERENDER_ROUTES)('%s content', (route) => {
   const $ = loadRoute(route)
   const expected = baseline.pages[route]!
 
