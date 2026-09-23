@@ -30,11 +30,26 @@ function linkFor(to: unknown): NavLink {
   return links.find(link => link.to === to) ?? links[0]!
 }
 
-const menuItems: DropdownMenuItem[] = links.map(link => ({ label: link.label, to: link.to }))
+// Choosing an item leaves focus on the body, as in Vuetify; Reka would return it to the trigger, whose focus overlay then stays on.
+let itemSelected = false
+const menuItems: DropdownMenuItem[] = links.map(link => ({
+  label: link.label,
+  to: link.to,
+  onSelect: () => {
+    itemSelected = true
+  }
+}))
+
+function onCloseAutoFocus(event: Event) {
+  if (itemSelected) {
+    event.preventDefault()
+  }
+  itemSelected = false
+}
 </script>
 
 <template>
-  <header class="relative z-0 bg-white">
+  <header class="relative z-0 grow bg-white">
     <div class="flex h-[100px] items-center px-4 py-1">
       <NuxtLink
         to="/"
@@ -66,7 +81,7 @@ const menuItems: DropdownMenuItem[] = links.map(link => ({ label: link.label, to
       <UDropdownMenu
         :items="menuItems"
         :modal="false"
-        :content="{ side: 'bottom', align: 'end', sideOffset: -48, collisionPadding: 12 }"
+        :content="{ side: 'bottom', align: 'end', sideOffset: -48, collisionPadding: 12, onCloseAutoFocus }"
       >
         <UButton
           color="neutral"
