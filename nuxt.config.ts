@@ -93,6 +93,13 @@ export default defineNuxtConfig({
         } else if (route.route === '/erreur-404/') {
           delete route.error
           route.fileName = '/404.html'
+          // Its payload file is skipped below: strip the preload link and the __NUXT_DATA__
+          // data-src that would otherwise fetch it on every hydration.
+          if (route.contents) {
+            route.contents = route.contents
+              .replace(/<link rel="preload" as="fetch" crossorigin="anonymous" href="\/erreur-404\/_payload\.json\?[^"]*">/, '')
+              .replace(/ data-src="\/erreur-404\/_payload\.json\?[^"]*"/, '')
+          }
         } else if (route.route.startsWith('/erreur-404/')) {
           // Payload-extraction companion route (e.g. _payload.json) crawled from the page above: skip it too.
           route.skip = true

@@ -34,4 +34,8 @@ describe('404.html', () => {
     expect(existsSync(outputPath('erreur-404'))).toBe(false)
     expect(readOutput('sitemap.xml')).not.toContain('erreur-404')
   })
+
+  it('does not reference the skipped payload file of the route it is rendered from', () => {
+    expect(readOutput('404.html')).not.toContain('_payload.json')
+  })
 })
