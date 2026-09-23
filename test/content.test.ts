@@ -28,4 +28,20 @@ describe('home page sections', () => {
     expect(picture.find('img').attr('src')).toBe('/img/virginie_dang_massage_2026_mobile.png')
     expect(picture.find('img').attr('alt')).toMatch(/^Vous offrir un moment de répit/)
   })
+
+  it('lists the care types, both rate tables and the three schedules', () => {
+    const text = normalize($('main').text())
+    for (const expected of [
+      'Les types de soin offerts',
+      'Tarifs',
+      '60 min', '90 $', '15-20 min', '40 $', '110 $',
+      'Frais de déplacement en sus',
+      'Lundi, mercredi, jeudi', 'Mardi', 'À domicile / en CHSLD / à l’hôpital -'
+    ]) {
+      expect(text).toContain(expected)
+    }
+    expect(text).toContain('40 $ 30 min')
+    expect($('main table')).toHaveLength(2)
+    expect($('main a[href="/soins/massage-de-repit/"]').first().text().trim()).toBe('Massage de répit')
+  })
 })

@@ -5,5 +5,6 @@ usePageSeo({ title: SITE_TITLE, description: SITE_DESCRIPTION, path: '/' })
 <template>
   <div>
     <HomeIntroduction class="mb-5" />
+    <HomeRates class="mb-10" />
   </div>
 </template>
