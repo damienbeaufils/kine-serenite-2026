@@ -6,6 +6,11 @@
       "description": "typescript-eslint supports typescript <6.1.0, and TypeScript 7 ships no JavaScript compiler API for vue-tsc",
       "matchPackageNames": ["typescript"],
       "allowedVersions": "<6.1.0"
+    },
+    {
+      "description": "@types/node follows the Node major pinned in .nvmrc",
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": "<25"
     }
   ]
 }

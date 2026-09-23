@@ -17,6 +17,13 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2026-06-30',
 
+  typescript: {
+    nodeTsConfig: {
+      include: ['../test/**/*', '../vitest.config.ts'],
+      compilerOptions: { types: ['node'] }
+    }
+  },
+
   eslint: {
     config: {
       stylistic: {
