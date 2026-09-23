@@ -1,4 +1,5 @@
 import type { PrerenderRoute } from 'nitropack'
+import { defineLocalBusiness } from 'nuxt-schema-org/schema'
 import { PRERENDER_ROUTES } from './shared/utils/routes'
 import { SITE_TITLE, SITE_URL } from './shared/utils/site'
 
@@ -8,7 +9,8 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/ui',
     '@nuxtjs/sitemap',
-    '@nuxtjs/robots'
+    '@nuxtjs/robots',
+    'nuxt-schema-org'
   ],
 
   components: [
@@ -139,6 +141,39 @@ export default defineNuxtConfig({
     clientBundle: {
       scan: true
     }
+  },
+
+  schemaOrg: {
+    identity: defineLocalBusiness({
+      '@type': 'HealthAndBeautyBusiness',
+      'name': 'Kiné-Sérénité',
+      'url': SITE_URL,
+      'logo': '/img/virginie_dang_massotherapeute_logo_2026.png',
+      'image': '/img/virginie_dang_massage_2026.png',
+      'telephone': '+1-418-790-1294',
+      'email': 'virginiedang.massotherapeute@gmail.com',
+      'founder': { '@type': 'Person', 'name': 'Virginie Dang' },
+      'address': {
+        streetAddress: '2 rue Beauregard',
+        addressLocality: 'Clermont',
+        addressRegion: 'QC',
+        postalCode: 'G4A 0A2',
+        addressCountry: 'CA'
+      },
+      'openingHoursSpecification': [
+        { dayOfWeek: 'Tuesday', opens: '09:00', closes: '17:30' }
+      ],
+      'areaServed': [
+        'Clermont', 'Sainte-Agnès', 'Pointe-au-Pic', 'Cap-à-l’Aigle',
+        'Saint-Fidèle', 'Saint-Hilarion', 'Notre-Dame-des-Monts', 'Saint-Aimé-des-Lacs',
+        'Baie-Saint-Paul', 'Saint-Siméon', 'Les Éboulements', 'Saint-Irénée'
+      ],
+      'sameAs': [
+        'https://www.facebook.com/virginiedang.massotherapeute',
+        'https://www.gorendezvous.com/virginiedang',
+        'https://rmpq.ca/repertoire-des-membres/clermont/virginie-dang-778809/'
+      ]
+    })
   },
 
   sitemap: {

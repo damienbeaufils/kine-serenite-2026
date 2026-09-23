@@ -18,6 +18,7 @@
     "@nuxtjs/robots": "^6.2.3",
     "@nuxtjs/sitemap": "^8.5.1",
     "nuxt": "^4.5.2",
+    "nuxt-schema-org": "^6.3.2",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
