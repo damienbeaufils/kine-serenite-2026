@@ -20,7 +20,9 @@ if (import.meta.server) useNuxtApp().payload.path = undefined
     <NuxtLayout>
       <ServicePage :title="heading">
         <div class="v-col col-12 text-center">
-          <p>La page demandée n’existe pas ou a été déplacée.</p>
+          <p v-if="error.status === 404">
+            La page demandée n’existe pas ou a été déplacée.
+          </p>
           <NuxtLink to="/">
             Retour à l’accueil
           </NuxtLink>
