@@ -24,8 +24,9 @@ pnpm test        # tests against .output/public (run pnpm generate first)
 1. Create the page under `app/pages/`.
 2. Add its route, with a trailing slash, to `shared/utils/routes.ts`. Unlinked pages are prerendered only because they're listed there. The list also drives every per-page test (content, images, schema, head, links, sitemap).
 3. Add an entry for that route to `test/fixtures/seo-baseline.json`: its title, description, canonical URL, h1 and expected page text.
-4. Call `usePageSeo()` with its title, description and path.
-5. For a page with images, add each one's alt text to `IMAGE_ALT` in `app/utils/image-alt.ts`, keyed by file name; a wrong key fails typecheck.
+4. Add its URL and priority (0.8 by default) to `EXPECTED` in `test/sitemap.test.ts`. For a page that stays out of the sitemap, like the Thai massage page, add its path to `sitemap.exclude` in `nuxt.config.ts` instead.
+5. Call `usePageSeo()` with its title, description and path.
+6. For a page with images, add each one's alt text to `IMAGE_ALT` in `app/utils/image-alt.ts`, keyed by file name; a wrong key fails typecheck.
 
 ## Deployment
 
@@ -33,6 +34,7 @@ Every push runs lint, typecheck, generate and tests. A push to `main` then deplo
 
 ## Notes
 
+- The tests compare each page's text with `test/fixtures/seo-baseline.json`. After a copy edit, update the route's `text` there; after a price change, also update the rate literals in `test/content.test.ts`.
 - TypeScript stays on 6.0.x: typescript-eslint supports `typescript <6.1.0`, and TypeScript 7 ships no JavaScript compiler API for vue-tsc. Renovate is configured to respect this.
 - `public/sw.js` unregisters the service worker that the previous version of the site installed. Keep it.
 - The layout reproduces the previous Vuetify 2 design: breakpoints, card and button metrics live in `app/assets/css/main.css` and `app/app.config.ts`.
