@@ -58,7 +58,7 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Tailwind's preflight flattens headings and lists; Vuetify 2 keeps browser sizes with zero margins. */
+  /* Tailwind's preflight flattens headings and lists; Vuetify 2 keeps the browser's heading sizes and list markers, with zero margins. */
   h1 { font-size: 2em; font-weight: 700; }
   h2 { font-size: 1.5em; font-weight: 700; }
   h3 { font-size: 1.17em; font-weight: 700; }
@@ -70,7 +70,7 @@
   a { color: var(--color-vuetify-link); text-decoration: underline; }
 }
 
-/* Vuetify's spacing helpers are !important; keeping these classes below the utilities layer gives `mt-1`, `py-2`, `p-5` the same precedence over them. */
+/* In the components layer so spacing utilities such as `mt-1`, `py-2` and `p-5` override these classes, as Vuetify's !important spacing helpers did. */
 @layer components {
   .v-container {
     width: 100%;
@@ -144,7 +144,6 @@
 @utility col-9 { flex: 0 0 75%; max-width: 75%; }
 @utility col-12 { flex: 0 0 100%; max-width: 100%; }
 
-/* Vuetify's type scale is !important, so it beats the card metrics it is combined with. */
 @utility text-h4 { font-size: 2.125rem !important; line-height: 2.5rem !important; letter-spacing: 0.0073529412em !important; }
 @utility text-h5 { font-size: 1.5rem !important; line-height: 2rem !important; letter-spacing: normal !important; }
 @utility text-h6 { font-size: 1.25rem !important; line-height: 2rem !important; letter-spacing: 0.0125em !important; }

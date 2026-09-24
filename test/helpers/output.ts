@@ -27,7 +27,7 @@ export function allOutputFiles(dir: string = OUTPUT_DIR): string[] {
   )
 }
 
-// Collapses ASCII whitespace only, so a no-break space never compares equal to a plain space.
+// Collapses ASCII whitespace only, so a no-break space inside the text stays distinct from a plain space.
 export function normalize(text: string): string {
   return text.replace(/[ \t\n\r\f]+/g, ' ').trim()
 }

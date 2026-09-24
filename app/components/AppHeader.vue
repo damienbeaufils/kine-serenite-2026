@@ -21,7 +21,7 @@ const links: NavLink[] = [
 const route = useRoute()
 const withoutTrailingSlash = (path: string) => path.replace(/\/+$/, '') || '/'
 
-// Exact match on path and hash, like Vuetify's nav buttons: anchor links are never active, and Accueil is not active on /#techniques.
+// Hash links are never active, and no link is active while the URL has a hash: the old site showed Accueil as active on / but not on /#techniques.
 function isActive(to: unknown): boolean {
   return typeof to === 'string' && !to.includes('#') && !route.hash && withoutTrailingSlash(route.path) === withoutTrailingSlash(to)
 }

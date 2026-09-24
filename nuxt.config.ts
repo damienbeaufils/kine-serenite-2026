@@ -86,7 +86,7 @@ export default defineNuxtConfig({
       routes: [...PRERENDER_ROUTES, '/sitemap.xml', '/erreur-404/']
     },
     hooks: {
-      // Nuxt always prerenders /404.html as an empty SPA shell. Write the server-rendered
+      // `nuxt generate` prerenders /404.html as an empty SPA shell. Write the server-rendered
       // error page of an unknown route there instead; clearing the error here, before Nitro
       // records it, keeps the build from failing on the expected 404.
       'prerender:generate'(route: PrerenderRoute) {
@@ -103,7 +103,6 @@ export default defineNuxtConfig({
               .replace(/ data-src="\/erreur-404\/_payload\.json\?[^"]*"/, '')
           }
         } else if (route.route.startsWith('/erreur-404/')) {
-          // Payload-extraction companion route (e.g. _payload.json) crawled from the page above: skip it too.
           route.skip = true
         }
       }

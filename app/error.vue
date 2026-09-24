@@ -11,7 +11,7 @@ useSeoMeta({ title: () => pageTitle(heading.value) })
 // @nuxtjs/robots skips Nuxt's /__nuxt_error render, so useRobotsRule has no context here.
 useHead({ meta: [{ name: 'robots', content: 'noindex' }] })
 // 404.html is served at every unknown URL: drop the rendered path so hydration keeps the
-// visitor's actual URL instead of replacing it with the one this page was prerendered from.
+// visitor's URL instead of replacing it with the one this page was prerendered from.
 if (import.meta.server) useNuxtApp().payload.path = undefined
 </script>
 

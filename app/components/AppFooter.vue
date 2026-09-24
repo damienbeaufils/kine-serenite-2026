@@ -10,7 +10,7 @@ onMounted(() => {
 
 <template>
   <footer class="sticky bottom-0 z-[3] flex flex-wrap items-center overflow-hidden bg-kine-light-grey px-4 py-1.5">
-    <!-- Sticky, not fixed: the page then ends below the footer whatever its wrapped height (40px, 92px at 1024px), as Vuetify's measured v-main padding did. overflow-hidden keeps the row's -12px margins out of the page height. -->
+    <!-- Sticky, not fixed, so the page ends below the footer at any wrapped height (40px, or 92px at 1024px). overflow-hidden stops the row's -12px margins from pushing it out below the footer and lengthening the page. -->
     <div class="v-row justify-center">
       <UButton
         variant="ghost"

@@ -21,7 +21,7 @@ defineProps<{
         </tr>
       </thead>
       <tbody>
-        <!-- The space after each row reproduces the text content of the old hand-written rows; a bare <tr v-for> renders none. -->
+        <!-- The old hand-written rows had whitespace between them, which shows in the page text; <tr v-for> renders none, so each row ends with a space. -->
         <template
           v-for="(row, index) in rows"
           :key="row.duration"

@@ -50,7 +50,7 @@ describe.each(PRERENDER_ROUTES)('%s structured data', (route) => {
   it('types the business as a LocalBusiness with typed opening hours', () => {
     const business = graph.find(node => hasType(node, 'HealthAndBeautyBusiness'))!
     expect([business['@type']].flat()).toEqual(expect.arrayContaining(['LocalBusiness', 'HealthAndBeautyBusiness']))
-    // The resolver unwraps a one-entry array into a single object.
+    // nuxt-schema-org unwraps a one-entry array into a single object.
     const hours = [business.openingHoursSpecification].flat() as Node[]
     expect(hours[0]!['@type']).toBe('OpeningHoursSpecification')
   })
