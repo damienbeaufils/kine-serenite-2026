@@ -145,6 +145,7 @@ export default defineNuxtConfig({
 
   schemaOrg: {
     identity: defineLocalBusiness({
+      'type': 'LocalBusiness',
       '@type': 'HealthAndBeautyBusiness',
       'name': 'Kiné-Sérénité',
       'url': SITE_URL,
