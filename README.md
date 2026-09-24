@@ -1,64 +1,37 @@
-# Nuxt Starter Template
+# kine-serenite.ca
 
-[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
+Website of Virginie Dang, massage therapist in Charlevoix (Québec). A static Nuxt 4 site deployed to GitHub Pages.
 
-Use this template to get started with [Nuxt UI](https://ui.nuxt.com) quickly.
+## Requirements
 
-- [Live demo](https://starter-template.nuxt.dev/)
-- [Documentation](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
+- Node 24 (`nvm use` reads `.nvmrc`)
+- pnpm (version pinned in `package.json`, `corepack enable` installs it)
 
-<a href="https://starter-template.nuxt.dev/" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-    <img alt="Nuxt Starter Template" src="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png" width="830" height="466">
-  </picture>
-</a>
-
-> The starter template for Vue is on https://github.com/nuxt-ui-templates/starter-vue.
-
-## Quick Start
-
-```bash [Terminal]
-npm create nuxt@latest -- -t ui
-```
-
-## Deploy your own
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=starter&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fstarter&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Fstarter-dark.png&demo-url=https%3A%2F%2Fstarter-template.nuxt.dev%2F&demo-title=Nuxt%20Starter%20Template&demo-description=A%20minimal%20template%20to%20get%20started%20with%20Nuxt%20UI.)
-
-## Setup
-
-Make sure to install the dependencies:
+## Commands
 
 ```bash
-pnpm install
+pnpm install     # install dependencies
+pnpm dev         # dev server on http://localhost:3001
+pnpm generate    # build the static site into .output/public
+pnpm preview     # serve .output/public like GitHub Pages, on http://localhost:3001
+pnpm lint        # ESLint
+pnpm typecheck   # vue-tsc through nuxt typecheck
+pnpm test        # tests against .output/public (run pnpm generate first)
 ```
 
-## Development Server
+## Adding a page
 
-Start the development server on `http://localhost:3000`:
+1. Create the page under `app/pages/`.
+2. Add its route, with a trailing slash, to `shared/utils/routes.ts`. Pages that nothing links to are only prerendered if they are listed there.
+3. Call `usePageSeo()` with its title, description and path.
+4. For a page with images, add each one's alt text to `IMAGE_ALT` in `app/utils/image-alt.ts`, keyed by file name; a wrong key fails typecheck.
 
-```bash
-pnpm dev
-```
+## Deployment
 
-## Production
+Every push runs lint, typecheck, generate and tests. A push to `main` then deploys `.output/public` to GitHub Pages. The custom domain `kine-serenite.ca` is set in the repository's Pages settings; the `CNAME` file in `public/` is kept for reference only.
 
-Build the application for production:
+## Notes
 
-```bash
-pnpm build
-```
-
-Locally preview production build:
-
-```bash
-pnpm preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
-
-## Renovate integration
-
-Install [Renovate GitHub app](https://github.com/apps/renovate/installations/select_target) on your repository and you are good to go.
+- TypeScript stays on 6.0.x: typescript-eslint supports `typescript <6.1.0`, and TypeScript 7 ships no JavaScript compiler API for vue-tsc. Renovate is configured to respect this.
+- `public/sw.js` unregisters the service worker that the previous version of the site installed. Keep it.
+- The layout reproduces the previous Vuetify 2 design: breakpoints, card and button metrics live in `app/assets/css/main.css` and `app/app.config.ts`.
