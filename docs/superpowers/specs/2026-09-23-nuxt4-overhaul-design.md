@@ -71,8 +71,9 @@ baseline.
 - TypeScript exception: `typescript@7.0.2` is the native port: its package has no
   `lib/typescript.js`, so no JavaScript compiler API. typescript-eslint (used by
   `@nuxt/eslint`) declares `typescript: ">=4.8.4 <6.1.0"`, and `vue-tsc` loads the same API.
-  TypeScript is pinned to `6.0.3`, a Renovate rule keeps it below 6.1, and the README says
-  why. The toolchain task confirms the breakage with TS 7 before pinning.
+  TypeScript is pinned to `6.0.3` (`package.json` uses `~6.0.3`, so only 6.0.x patch releases
+  apply), a Renovate rule keeps it below 6.1, and the README says why. The toolchain task
+  confirms the breakage with TS 7 before pinning.
 
 ### 3.2 Modules
 
@@ -129,6 +130,9 @@ docs/superpowers/         this spec and the implementation plan
 .github/workflows/ci.yml
 .nvmrc
 ```
+
+Components are registered with `pathPrefix: false` (`nuxt.config.ts` `components`), so the
+files under `components/home/` keep their own names (`<RatesTable>`, `<ServiceTile>`, and so on).
 
 The header and footer live in the default layout rather than in `app.vue`, so `error.vue` renders
 inside the same shell through `<NuxtLayout>`.
@@ -195,7 +199,7 @@ reset keeps or sets them differently. The base layer restores Vuetify 2's elemen
 | Vuetify | New |
 |---|---|
 | `v-app` / `v-main` / `v-container` / `v-row` / `v-col` | Flex column app shell; Tailwind grid with the 4.1 breakpoints and gutters |
-| `v-app-bar flat` 100px, logo `max-height=120 contain` with `margin-left: -3em` | `AppHeader`: flex row reproducing the measured boxes |
+| `v-app-bar flat` 100px, logo `max-height=120 contain` with `margin-left: -3em` | `AppHeader`: flex row reproducing the measured boxes, `grow` (Vuetify's `.v-toolbar { flex: 1 1 auto }`) and `contain-layout` (Vuetify's `.v-toolbar { contain: layout }`, keeps a 320px page from scrolling sideways) |
 | Nav `v-btn text` on teal (white, uppercase, 14px/500, 1.25px tracking, 36px high, 4px radius) | `UButton`, themed globally; exact-route active state as a white 18% overlay |
 | `v-menu` + `v-list` below 1264px | `UDropdownMenu`, themed: 48px items, elevation 8, teal uppercase labels |
 | `v-card` + `__title` / `__text` / `__subtitle`, `flat` | `UCard` themed with no ring, no dividers, 4px radius, elevation 2, a flat variant; inner blocks use the 4.2 card metrics |
@@ -203,7 +207,7 @@ reset keeps or sets them differently. The base layer restores Vuetify 2's elemen
 | `v-img` (background-image div, lazy, fade-in) | `<img>` with `loading="lazy"`, `decoding="async"`, intrinsic `width`/`height`, CSS `aspect-ratio`, `object-fit` cover or contain |
 | Hero: two `v-img` toggled at 600px | `<picture>` with a `min-width: 600px` source, `max-height: 600px`, contain; eager with `fetchpriority="high"` |
 | `v-hover` elevation 0 to 12 | CSS `hover:` shadow with Vuetify's 280ms `cubic-bezier(.4,0,.2,1)` transition |
-| `v-footer app` | `fixed bottom-0 inset-x-0`, 40px, `#EEEEEE`; the content area gets 40px bottom padding |
+| `v-footer app` | `sticky bottom-0` at the end of a `min-h-screen` flex column, `#EEEEEE`; overlays the content while scrolling and ends below it, at any wrapped footer height |
 | `v-icon mdi-*` (CDN icon font) | `UIcon`: `i-mdi-menu`, `i-mdi-facebook`, `i-mdi-email`, `i-mdi-phone` |
 | `$vuetify.breakpoint.xsOnly` in About | CSS only: `max-w-[200px] max-h-[200px] sm:max-w-none sm:max-h-none` |
 | `hidden-md-and-down`, `d-lg-flex`, `d-sm-none`, … | Tailwind responsive utilities on the 4.1 breakpoints |
@@ -294,13 +298,18 @@ lymphatique, Soin thérapeutique`.
    `Disallow: /_nuxt/`), same `Sitemap: https://kine-serenite.ca/sitemap.xml` line. Any
    robots meta tag the module adds must say `index, follow` on indexable pages.
 5. JSON-LD through `nuxt-schema-org`: `WebSite` and `WebPage` on every page, plus one
-   identity node:
-   - `@type: HealthAndBeautyBusiness`, `name: Kiné-Sérénité`, `url`, `logo`
-     (`/img/virginie_dang_massotherapeute_logo_2026.png`), `image` (hero)
+   identity node, declared with `defineLocalBusiness`, `type: 'LocalBusiness'` and
+   `'@type': 'HealthAndBeautyBusiness'`, so the node resolves as
+   `["Organization","LocalBusiness","HealthAndBeautyBusiness"]`:
+   - `name: Kiné-Sérénité`, `url`, `logo`
+     (`/img/virginie_dang_massotherapeute_logo_2026.png`), `image` (hero). nuxt-schema-org
+     always moves `logo` onto its own `#organization` node for a non-plain-Organization
+     identity; the logo stays in the graph there.
    - `founder`: Person "Virginie Dang"
    - `telephone: +1-418-790-1294`, `email: virginiedang.massotherapeute@gmail.com`
    - `address`: 2 rue Beauregard, Clermont, QC, G4A 0A2, CA
-   - `openingHoursSpecification`: Tuesday, 09:00 to 17:30
+   - `openingHoursSpecification`: Tuesday, 09:00 to 17:30, resolved as an
+     `OpeningHoursSpecification`
    - `areaServed`: the travel-fee towns (Clermont, Sainte-Agnès, Pointe-au-Pic,
      Cap-à-l'Aigle, Saint-Fidèle, Saint-Hilarion, Notre-Dame-des-Monts, Saint-Aimé-des-Lacs,
      Baie-Saint-Paul, Saint-Siméon, Les Éboulements, Saint-Irénée)
@@ -324,9 +333,17 @@ lymphatique, Soin thérapeutique`.
   Accueil, and `robots: noindex`. Today GitHub's generic 404 page is shown.
   Nuxt prerenders `/404.html` as an empty SPA shell (no server render), and it has no option
   to change that. A Nitro `prerender:generate` hook in `nuxt.config.ts` skips that shell and
-  writes the server-rendered error page of an internal unknown route (`/__404/`) to
-  `404.html` instead, so the 404 content and its `noindex` are in the static HTML. The
-  internal route is excluded from the sitemap and leaves no file of its own.
+  writes the server-rendered error page of an internal unknown route to `404.html` instead,
+  so the 404 content is in the static HTML. The internal route is `/erreur-404/`;
+  @nuxtjs/robots skips `/__*` paths, which is one reason for the name. The hook also skips
+  the route's own `index.html` and `_payload.json`, so it leaves no file of its own and no
+  sitemap entry, and it strips the `_payload.json` preload link and the `data-src` attribute
+  from the written HTML, so the page uses its inline payload and fires no request.
+  Nuxt renders error pages through its internal `/__nuxt_error` endpoint, which
+  @nuxtjs/robots always skips, so `error.vue` sets `robots: noindex` itself through
+  `useHead` rather than through `useRobotsRule`. It also clears `payload.path` during the
+  server render, so a visitor's address bar keeps the URL they typed instead of
+  `/erreur-404/`. The body sentence shows only on a 404, not on other errors.
 
 ## 7. Testing and verification
 
@@ -359,7 +376,7 @@ Run after `nuxt generate`, against `.output/public`:
   fallback). The production artifact is tested, not dev mode.
 - Matrix: 9 routes × 5 viewports (390×844, 768×1024, 1024×768, 1440×900, 1920×1080) = 45
   full-page comparisons. Interactive states: hamburger open at 390 and 1024, service tile
-  hover, nav button hover and active state, fixed footer mid-scroll.
+  hover, nav button hover and active state, footer mid-scroll.
 - Capture protocol: wait for `document.fonts.ready`; scroll through the page to trigger lazy
   images, then back to the top; disable transitions and animations; same Chrome build for
   both sides.
@@ -371,12 +388,21 @@ Run after `nuxt generate`, against `.output/public`:
   `navigate_page`, `evaluate_script`, full-page `take_screenshot`, pixel diff by a scratch
   script. Plus `lighthouse_audit` on every route for both sites, `list_console_messages`
   (no errors, no hydration warnings) and `list_network_requests` (no Google Fonts or
-  jsDelivr requests).
+  jsDelivr requests). `resize_page` reaches only 1024 and 1440 in the MCP's headful Chrome;
+  768 and 1920 use `emulate` at DPR 2; 390 uses `emulate` at DPR 1 because of Chrome's
+  16384px capture limit. The rightmost 15 CSS px (the classic scrollbar) are not compared
+  in pass 2; pass 1 covers them.
 - Pass threshold: At most 0.5% differing pixels per screenshot at colour threshold 0.1,
   page height within ±2px, and every remaining diff region inspected and attributed to
   antialiasing or sub-pixel rounding. A structural diff is fixed at the token, base or theme
-  layer, and then the whole matrix is re-run.
-- Screenshots, diff images and reports stay in the session scratchpad.
+  layer, and then the whole matrix is re-run. A cell whose differing pixels all fall inside
+  `<img>` boxes is accepted as a resampling difference instead, because Chromium resamples
+  the 1920px sources differently for `<img>` than for the old CSS `background-image`; it
+  passes only with 0 differing pixels outside those boxes, and the masked counts are
+  recorded. Known cells: `/soins/massage-thailandais-sur-table/` at 390×844 and 1024×768,
+  and the `menu-1024` state, whose only other pixels are known antialiasing clusters.
+- Screenshots, diff images and reports stay in a verification workspace outside both
+  repositories, not in the session scratchpad.
 
 ## 8. Build and deployment
 
