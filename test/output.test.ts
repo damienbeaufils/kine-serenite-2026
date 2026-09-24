@@ -38,6 +38,12 @@ describe('404.html', () => {
   it('does not reference the skipped payload file of the route it is rendered from', () => {
     expect(readOutput('404.html')).not.toContain('_payload.json')
   })
+
+  it('carries no rendered path, so hydration keeps the URL the visitor asked for', () => {
+    const payload = JSON.parse($()('script#__NUXT_DATA__').text())
+    // devalue stores the root object's values as indexes into this array; -1 encodes undefined.
+    expect(payload[0].path).toBe(-1)
+  })
 })
 
 describe('sw.js', () => {
