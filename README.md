@@ -22,9 +22,10 @@ pnpm test        # tests against .output/public (run pnpm generate first)
 ## Adding a page
 
 1. Create the page under `app/pages/`.
-2. Add its route, with a trailing slash, to `shared/utils/routes.ts`. Pages that nothing links to are only prerendered if they are listed there.
-3. Call `usePageSeo()` with its title, description and path.
-4. For a page with images, add each one's alt text to `IMAGE_ALT` in `app/utils/image-alt.ts`, keyed by file name; a wrong key fails typecheck.
+2. Add its route, with a trailing slash, to `shared/utils/routes.ts`. Unlinked pages are prerendered only because they're listed there. The list also drives every per-page test (content, images, schema, head, links, sitemap).
+3. Add an entry for that route to `test/fixtures/seo-baseline.json`: its title, description, canonical URL, h1 and expected page text.
+4. Call `usePageSeo()` with its title, description and path.
+5. For a page with images, add each one's alt text to `IMAGE_ALT` in `app/utils/image-alt.ts`, keyed by file name; a wrong key fails typecheck.
 
 ## Deployment
 
