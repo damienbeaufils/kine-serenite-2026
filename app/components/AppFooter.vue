@@ -49,7 +49,7 @@ onMounted(() => {
           name="i-mdi-email"
           class="size-6"
         />
-        <small class="hidden sm:flex">&nbsp;virginiedang.massotherapeute@gmail.com</small>
+        <small class="hidden leading-[normal] sm:flex">&nbsp;virginiedang.massotherapeute@gmail.com</small>
       </UButton>
       <UButton
         variant="ghost"
@@ -61,7 +61,7 @@ onMounted(() => {
           name="i-mdi-phone"
           class="size-6"
         />
-        <small class="hidden sm:flex">&nbsp;418-790-1294</small>
+        <small class="hidden leading-[normal] sm:flex">&nbsp;418-790-1294</small>
       </UButton>
       <UButton
         color="neutral"
@@ -69,7 +69,7 @@ onMounted(() => {
         disabled
         class="my-2 hidden p-0 sm:mx-5 sm:flex"
       >
-        <small>&copy; 2021-{{ year }} - Virginie Dang</small>
+        <small class="leading-[normal]">&copy; 2021-{{ year }} - Virginie Dang</small>
       </UButton>
     </div>
   </footer>
