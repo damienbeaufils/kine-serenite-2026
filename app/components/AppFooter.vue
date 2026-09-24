@@ -42,6 +42,7 @@ onMounted(() => {
       <UButton
         variant="ghost"
         to="mailto:virginiedang.massotherapeute@gmail.com"
+        aria-label="Courriel : virginiedang.massotherapeute@gmail.com"
         class="my-2 p-0 sm:mx-5"
       >
         <UIcon
@@ -53,6 +54,7 @@ onMounted(() => {
       <UButton
         variant="ghost"
         to="tel:4187901294"
+        aria-label="Téléphone : 418-790-1294"
         class="my-2 p-0 sm:mx-5"
       >
         <UIcon

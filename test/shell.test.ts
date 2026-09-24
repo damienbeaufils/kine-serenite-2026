@@ -31,6 +31,19 @@ describe('site shell', () => {
     ])
   })
 
+  it('names every footer link without the labels that phones hide, keeping their visible text in the name', () => {
+    const links = $('footer a').toArray()
+    expect(links.map(el => $(el).attr('aria-label') ?? $(el).find('img').attr('alt'))).toEqual([
+      'Facebook',
+      'Prendre un rendez-vous',
+      'Courriel : virginiedang.massotherapeute@gmail.com',
+      'Téléphone : 418-790-1294'
+    ])
+    for (const el of links) {
+      expect($(el).attr('aria-label') ?? '').toContain($(el).text().trim())
+    }
+  })
+
   it('prints the build year in the copyright', () => {
     expect(normalize($('footer').text())).toContain(`© 2021-${new Date().getFullYear()} - Virginie Dang`)
   })
