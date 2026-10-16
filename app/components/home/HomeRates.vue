@@ -61,6 +61,10 @@ const homeRates = [
             vous-même, juste le temps du soin.
           </p>
           <p>
+            Secteur desservi : région de Charlevoix, entre Baie-Saint-Paul et
+            Saint-Siméon.
+          </p>
+          <p>
             Plus de détail en cliquant ici :&nbsp;<NuxtLink
               class="font-bold text-inherit underline"
               to="/soins/massage-de-repit/"
